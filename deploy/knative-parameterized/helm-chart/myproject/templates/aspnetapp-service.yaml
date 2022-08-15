@@ -1,0 +1,28 @@
+
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: aspnetapp
+    name: aspnetapp
+spec:
+    template:
+        metadata:
+            creationTimestamp: null
+        spec:
+            containers:
+                - image: quay.io/jefrankl/aspnetapp:latest
+                  imagePullPolicy: Always
+                  name: aspnetapp
+                  ports:
+                    - containerPort: 8080
+                  resources: {}
+            imagePullSecrets:
+                - name: quay-io-imagepullsecret
+            restartPolicy: Always
+            securityContext: {}
+status: {}
+
+...

@@ -1,0 +1,5 @@
+resources:
+  - aspnetapp-deployment.yaml
+  - aspnetapp-latest-imagestream.yaml
+  - aspnetapp-service.yaml
+  - quay-io-imagepullsecret-secret.yaml

@@ -1,0 +1,117 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: myproject-template
+  generatename: ""
+  namespace: ""
+  selflink: ""
+  uid: ""
+  resourceversion: ""
+  generation: 0
+  creationtimestamp: "0001-01-01T00:00:00Z"
+  deletiontimestamp: null
+  deletiongraceperiodseconds: null
+  labels: {}
+  annotations: {}
+  ownerreferences: []
+  finalizers: []
+  clustername: ""
+  managedfields: []
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: aspnetapp
+      name: aspnetapp
+    spec:
+      progressDeadlineSeconds: 600
+      replicas: ${{COMMON_REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: aspnetapp
+      strategy:
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+        type: RollingUpdate
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: aspnetapp
+          name: aspnetapp
+        spec:
+          containers:
+            - image: quay.io/jefrankl/aspnetapp:latest
+              imagePullPolicy: Always
+              name: aspnetapp
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          imagePullSecrets:
+            - name: quay-io-imagepullsecret
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status: {}
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: aspnetapp-latest
+      name: aspnetapp-latest
+    spec:
+      lookupPolicy:
+        local: false
+      tags:
+        - annotations: null
+          from:
+            kind: DockerImage
+            name: aspnetapp
+          generation: null
+          importPolicy: {}
+          name: latest
+          referencePolicy:
+            type: ""
+    status:
+      dockerImageRepository: ""
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: aspnetapp
+      name: aspnetapp
+    spec:
+      internalTrafficPolicy: Cluster
+      ports:
+        - name: port-8080
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        move2kube.konveyor.io/service: aspnetapp
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    data:
+      .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJxdWF5LmlvIjoge30KCX0KfQ==
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: quay-io-imagepullsecret
+    type: kubernetes.io/dockerconfigjson
+parameters:
+  - name: COMMON_REPLICAS
+    value: "2"

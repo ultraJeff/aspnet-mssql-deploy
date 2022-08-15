@@ -1,0 +1,12 @@
+resources:
+  - myproject-git-repo-route.yaml
+  - myproject-tekton-triggers-admin-role.yaml
+  - myproject-tekton-triggers-admin-rolebinding.yaml
+  - myproject-tekton-triggers-admin-serviceaccount.yaml
+  - quay-io-imagepullsecret-secret.yaml
+  - myproject-run-clone-build-push-triggertemplate.yaml
+  - myproject-clone-build-push-pipeline.yaml
+  - myproject-clone-push-serviceaccount.yaml
+  - myproject-git-event-triggerbinding.yaml
+  - myproject-git-repo-eventlistener.yaml
+  - myproject-image-registry-secret.yaml
